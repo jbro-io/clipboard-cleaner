@@ -16,8 +16,6 @@ ClipboardCleaner lives in your menu bar with a clipboard icon.
 - **Left-click** — cleans the clipboard immediately (strips formatting from current contents)
 - **Right-click** — opens a menu to quit the app
 
-The app also watches your clipboard and automatically strips formatting when it detects rich text.
-
 ## Download from Slack
 
 If someone sent you `ClipboardCleaner.zip`:
