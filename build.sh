@@ -22,7 +22,7 @@ build() {
     mkdir -p "$MACOS"
 
     # Compile
-    swiftc "$SCRIPT_DIR/$APP_NAME.swift" \
+    swiftc "$SCRIPT_DIR/TextCleaner.swift" "$SCRIPT_DIR/$APP_NAME.swift" \
         -o "$MACOS/$APP_NAME" \
         -framework Cocoa \
         -swift-version 5
@@ -130,12 +130,21 @@ uninstall() {
     echo "$APP_NAME uninstalled."
 }
 
+test() {
+    echo "Running tests..."
+    swiftc "$SCRIPT_DIR/TextCleaner.swift" "$SCRIPT_DIR/ClipboardCleanerTests.swift" \
+        -o /tmp/ClipboardCleanerTests \
+        -swift-version 5
+    /tmp/ClipboardCleanerTests
+}
+
 case "${1:-build}" in
-    build)   build ;;
-    install) install ;;
+    build)     build ;;
+    test)      test ;;
+    install)   install ;;
     uninstall) uninstall ;;
     *)
-        echo "Usage: bash build.sh [build|install|uninstall]"
+        echo "Usage: bash build.sh [build|test|install|uninstall]"
         exit 1
         ;;
 esac
