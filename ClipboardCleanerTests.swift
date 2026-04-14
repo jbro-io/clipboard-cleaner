@@ -85,6 +85,45 @@ enum TestRunner {
             "Already clean text."
         )
 
+        // --- List preservation ---
+
+        print("\nList preservation:")
+
+        check("preserves bullet lines with dashes",
+            TextCleaner.clean("- First item\n- Second item\n- Third item"),
+            "- First item\n- Second item\n- Third item"
+        )
+
+        check("preserves bullet lines with asterisks",
+            TextCleaner.clean("* First item\n* Second item"),
+            "* First item\n* Second item"
+        )
+
+        check("preserves bullet lines with plus signs",
+            TextCleaner.clean("+ First item\n+ Second item"),
+            "+ First item\n+ Second item"
+        )
+
+        check("preserves numbered list",
+            TextCleaner.clean("1. First\n2. Second\n3. Third"),
+            "1. First\n2. Second\n3. Third"
+        )
+
+        check("joins wrapped continuation within a list item",
+            TextCleaner.clean("- This is a long item that\n  wraps to the next line\n- Second item"),
+            "- This is a long item that wraps to the next line\n- Second item"
+        )
+
+        check("preserves list after a paragraph",
+            TextCleaner.clean("Here are the items:\n\n- One\n- Two\n- Three"),
+            "Here are the items:\n\n- One\n- Two\n- Three"
+        )
+
+        check("preserves list with ▎ prefix stripped",
+            TextCleaner.clean(" ▎ - First item\n ▎ - Second item\n ▎ - Third item"),
+            "- First item\n- Second item\n- Third item"
+        )
+
         // --- Summary ---
 
         print("\n\(passed + failed) tests, \(passed) passed, \(failed) failed")

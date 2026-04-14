@@ -17,20 +17,32 @@ enum TextCleaner {
         // 3. Split on paragraph breaks (2+ consecutive newlines)
         let paragraphs = splitParagraphs(stripped)
 
-        // 4. Within each paragraph, join wrapped lines
+        // 4. Within each paragraph, join wrapped lines (preserving list items)
         let cleaned = paragraphs.map { paragraph -> String in
-            let joined = paragraph.replacingOccurrences(
-                of: "\\n[ \\t]*",
-                with: " ",
-                options: .regularExpression
-            )
+            let lines = paragraph.components(separatedBy: "\n")
+            var joined: [String] = []
+            for line in lines {
+                let stripped = line.replacingOccurrences(of: "^[ \\t]*", with: "", options: .regularExpression)
+                if stripped.isEmpty { continue }
+                if joined.isEmpty || isListItem(stripped) {
+                    joined.append(stripped)
+                } else {
+                    joined[joined.count - 1] += " " + stripped
+                }
+            }
             // 5. Trim extra whitespace
-            return joined.trimmingCharacters(in: .whitespacesAndNewlines)
-                .replacingOccurrences(of: "  +", with: " ", options: .regularExpression)
+            return joined.map {
+                $0.trimmingCharacters(in: .whitespacesAndNewlines)
+                    .replacingOccurrences(of: "  +", with: " ", options: .regularExpression)
+            }.joined(separator: "\n")
         }.filter { !$0.isEmpty }
 
         // 6. Rejoin paragraphs
         return cleaned.joined(separator: "\n\n")
+    }
+
+    private static func isListItem(_ line: String) -> Bool {
+        line.range(of: "^[-*+] |^\\d+[.)] ", options: .regularExpression) != nil
     }
 
     private static func splitParagraphs(_ text: String) -> [String] {
